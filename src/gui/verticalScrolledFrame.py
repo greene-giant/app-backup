@@ -9,14 +9,18 @@ class VerticalScrolledFrame(Frame):
     * This frame only allows vertical scrolling
     
     """
-    def __init__(self, parent, *args, **kw):
+    def __init__(self, parent, *args, frameBackground=None, **kw):
         Frame.__init__(self, parent, *args, **kw)            
 
         # create a canvas object and a vertical scrollbar for scrolling it
         vscrollbar = Scrollbar(self, orient=VERTICAL)
         vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
-        canvas = Canvas(self, bd=0, highlightthickness=0,
-                        yscrollcommand=vscrollbar.set)
+
+        canvas = Canvas(self, 
+                        bd=0, 
+                        highlightthickness=0,
+                        yscrollcommand=vscrollbar.set,
+                        background=frameBackground)
         canvas.pack(side=LEFT, fill=BOTH, expand=TRUE)
         vscrollbar.config(command=canvas.yview)
 
@@ -38,6 +42,9 @@ class VerticalScrolledFrame(Frame):
             if interior.winfo_reqwidth() != canvas.winfo_width():
                 # update the canvas's width to fit the inner frame
                 canvas.config(width=interior.winfo_reqwidth())
+
+            # Move to bottom of canvas:
+            canvas.yview_moveto(1)
         interior.bind('<Configure>', _configure_interior)
 
         def _configure_canvas(event):
