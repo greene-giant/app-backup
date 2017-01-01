@@ -65,3 +65,7 @@ class VerticalScrolledFrame(Frame):
         self.update()
         self.canvas.yview_moveto(1)
 
+    def move_scrollbar_to_top(self):
+        self.update()
+        self.canvas.yview_moveto(0)
+

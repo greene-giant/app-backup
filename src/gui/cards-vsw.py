@@ -66,21 +66,37 @@ class CardHolder(vsw.VerticalScrolledFrame):
                            background=COLOR_PADDING)
         padding.pack(fill=tk.X)
 
+        # widget reference holder:
+        self.cards = []
+
 
     def add_card_spacing(self):
-        padding = tk.Frame(self.content,
-                           height=CARD_PADDING_Y,
-                           background=COLOR_PADDING)
-        padding.pack(fill=tk.X)
+        self.cards.append(tk.Frame(self.content,
+                                   height=CARD_PADDING_Y,
+                                   background=COLOR_PADDING))
+
+        self.cards[-1].pack(fill=tk.X)
 
 
 
     def add_title_card(self, text, color):
-        titleCard = TitleCard(self.content, text=text, color=color)
-        titleCard.pack(fill=tk.X)
+        self.cards.append(TitleCard(self.content, 
+                                    text=text, 
+                                    color=color))
+
+        self.cards[-1].pack(fill=tk.X)
 
         self.add_card_spacing()
         self.move_scrollbar_to_bottom()
+
+
+    def clear_output(self):
+        for c in self.cards:
+            c.destroy()
+
+        self.cards = []
+        self.move_scrollbar_to_top()
+
 
 
 
@@ -105,6 +121,9 @@ class TestApp(tk.Tk):
         self.bind('d', 
                 lambda e, t="Backup Complete", c=COLOR_COPY: 
                 cardHolder.add_title_card(t, c))
+
+        self.bind('x',
+                lambda e: cardHolder.clear_output())
 
 
 if __name__ == "__main__":
