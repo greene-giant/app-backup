@@ -56,6 +56,8 @@ class CardHolder(vsw.VerticalScrolledFrame):
                            background=COLOR_PADDING)
         padding.pack(fill=tk.X)
 
+        self.move_scrollbar_to_bottom()
+
         
 
 
@@ -73,7 +75,7 @@ class TestApp(tk.Tk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-        self.bind('<Button-1>', lambda e: cardHolder.add_title_card("Insert Text", COLOR_COPY))
+        self.bind('a', lambda e: cardHolder.add_title_card("Insert Text", COLOR_COPY))
 
 
 if __name__ == "__main__":

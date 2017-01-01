@@ -1,8 +1,11 @@
 
 from tkinter import *
+from tkinter.ttk import *
 
 class VerticalScrolledFrame(Frame):
     """A pure Tkinter scrollable frame that actually works!
+
+    Copied from http://tkinter.unpythonic.net/wiki/VerticalScrolledFrame
 
     * Use the 'interior' attribute to place widgets inside the scrollable frame
     * Construct and pack/place/grid normally
@@ -16,7 +19,7 @@ class VerticalScrolledFrame(Frame):
         vscrollbar = Scrollbar(self, orient=VERTICAL)
         vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
 
-        canvas = Canvas(self, 
+        self.canvas = canvas = Canvas(self, 
                         bd=0, 
                         highlightthickness=0,
                         yscrollcommand=vscrollbar.set,
@@ -42,10 +45,8 @@ class VerticalScrolledFrame(Frame):
             if interior.winfo_reqwidth() != canvas.winfo_width():
                 # update the canvas's width to fit the inner frame
                 canvas.config(width=interior.winfo_reqwidth())
-
-            # Move to bottom of canvas:
-            canvas.yview_moveto(1)
         interior.bind('<Configure>', _configure_interior)
+
 
         def _configure_canvas(event):
             if interior.winfo_reqwidth() != canvas.winfo_width():
@@ -53,5 +54,14 @@ class VerticalScrolledFrame(Frame):
                 canvas.itemconfigure(interior_id, width=canvas.winfo_width())
         canvas.bind('<Configure>', _configure_canvas)
 
+
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
         return
+
+    def move_scrollbar_to_bottom(self):
+        self.update()
+        self.canvas.yview_moveto(1)
 
