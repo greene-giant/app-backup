@@ -11,6 +11,7 @@ class ButtonBar(tk.Frame):
         # Directories frame:
         dirGroup = tk.LabelFrame(self, 
                                  text = "Directories",
+                                 font = (BUTTONBAR_BUTTON_FONT, BUTTONBAR_BUTTON_SIZE),
                                  padx = BUTTONBAR_FRAME_PADX_INNER,
                                  pady = BUTTONBAR_FRAME_PADY_INNER)
 
@@ -51,6 +52,7 @@ class ButtonBar(tk.Frame):
         # Backup frame:
         backGroup = tk.LabelFrame(self, 
                                   text = "Backup",
+                                  font = (BUTTONBAR_BUTTON_FONT, BUTTONBAR_BUTTON_SIZE),
                                   padx = BUTTONBAR_FRAME_PADX_INNER,
                                   pady = BUTTONBAR_FRAME_PADY_INNER)
 
@@ -82,6 +84,15 @@ class ButtonBar(tk.Frame):
                                       text = "Clear",
                                       command = self._on_clear_press)
         back_clearButton.pack(side = tk.LEFT, padx = BUTTONBAR_BUTTON_PADX)
+
+
+        # Configure buttons and frames:
+        s = ttk.Style()
+        s.configure("TButton", 
+                    font = (BUTTONBAR_BUTTON_FONT, BUTTONBAR_BUTTON_SIZE))
+
+        s.configure("Labelframe", 
+                    font = (BUTTONBAR_BUTTON_FONT, BUTTONBAR_BUTTON_SIZE))
 
     def _on_add_press(self):
         print("Add pressed")
