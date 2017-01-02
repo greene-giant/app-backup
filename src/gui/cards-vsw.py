@@ -11,11 +11,12 @@ sticky_all = (tk.N, tk.S, tk.E, tk.W)
 
 
 class ThreadedWrite(thd.Thread):
-    def __init__(self, cardHolder, textBox, proc):
+    def __init__(self, cardHolder, textBox, proc, tag):
         thd.Thread.__init__(self)
         self.cardHolder = cardHolder
         self.textBox = textBox
         self.proc = proc
+        self.tag = tag
 
     def run(self):
         while True:
@@ -24,7 +25,7 @@ class ThreadedWrite(thd.Thread):
                 break
             elif line != "":
                 print(line.rstrip())
-                self.cardHolder.cards[-2].write_output(line.rstrip())
+                self.cardHolder.cards[-2].write_output(line.rstrip(), self.tag)
                 self.cardHolder.move_scrollbar_to_bottom()
 
 
@@ -94,14 +95,18 @@ class OutputCard(tk.Frame):
                                        pady = CARD_OUTPUT_PADDING_Y,
                                        borderwidth = 0,
                                        wrap=tk.NONE)
+
         output["state"] = "disabled"
+        output.tag_config("normal", foreground = COLOR_NORMAL)
+        output.tag_config("clean", foreground = COLOR_CLEAN)
+
         output.pack(fill = tk.BOTH, expand=True)
 
 
-    def write_output(self, line):
+    def write_output(self, line, tag="normal"):
         self.output["state"] = "normal"
         self.output["height"] += 1
-        self.output.insert(tk.END, line + "\n")
+        self.output.insert(tk.END, line + "\n", tag)
         self.output["state"] = "disabled"
         self.output.update()
 
@@ -217,17 +222,8 @@ class CardHolder(vsw.VerticalScrolledFrame):
                           stdout=subp.PIPE, 
                           stderr=subp.STDOUT)
 
-        t = ThreadedWrite(self, self.cards[-2], proc)
+        t = ThreadedWrite(self, self.cards[-2], proc, "normal")
         t.start()
-
-        #while True:
-        #    line = proc.stdout.readline().decode("utf-8")
-        #    if line == "" and proc.poll() != None:
-        #        break
-        #    elif line != "":
-        #        print(line.rstrip())
-        #        self.cards[-2].write_output(line.rstrip())
-        #        self.move_scrollbar_to_bottom()
 
 
 
@@ -240,6 +236,7 @@ class TestApp(tk.Tk):
 
         self.title("Card Test")
         self.geometry("1000x400")
+        self.minsize(800,200)
 
         cardHolder = CardHolder(self)
         cardHolder.grid(column=0, row=0, sticky=sticky_all)
