@@ -4,6 +4,12 @@ import color.wombat
 
 sticky_all = (tk.N, tk.S, tk.E, tk.W)
 
+APP_HEIGHT = 1000
+APP_WIDTH = 1000
+
+APP_MIN_HEIGHT = 800
+APP_MIN_WIDTH = 800
+
 COLOR_NORMAL  = color.wombat.white
 COLOR_COPY    = color.wombat.green
 COLOR_CLEAN   = color.wombat.red

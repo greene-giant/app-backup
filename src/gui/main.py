@@ -5,27 +5,26 @@ from tkinter import ttk
 from settings import *
 import buttonBar, cards, fileTree
 
-APP_HEIGHT = 1000
-APP_WIDTH = 1000
-
-APP_MIN_HEIGHT = 800
-APP_MIN_WIDTH = 800
 
 class MainApp(tk.Tk):
     def __init__(self, *arg, **kwargs):
         tk.Tk.__init__(self, *arg, **kwargs)
 
+        # Get screen dimensions:
         ws = self.winfo_screenwidth()
         hs = self.winfo_screenheight()
 
+        # Calculation window position:
         xpos = int(ws/2 - APP_WIDTH/2)
         ypos = int(hs/2 - APP_HEIGHT/2)
 
+        # Window settings:
         self.title("Full GUI Test")
         self.geometry("{}x{}+{}+{}".format(APP_WIDTH, APP_HEIGHT,
                                            xpos, ypos))
         self.minsize(APP_MIN_WIDTH, APP_MIN_HEIGHT)
 
+        # Build app GUI:
         FT = fileTree.FileTree(self, height=int(0.3*APP_HEIGHT))
         FT.pack(fill = tk.X, expand = False)
 
