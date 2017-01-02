@@ -1,5 +1,8 @@
 
+import tkinter as tk
 import color.wombat
+
+sticky_all = (tk.N, tk.S, tk.E, tk.W)
 
 COLOR_NORMAL  = color.wombat.white
 COLOR_COPY    = color.wombat.green
@@ -25,4 +28,12 @@ CARD_OUTPUT_PADDING_Y = 6
 CARD_OUTPUT_FONT = "DejaVu Sans Mono"
 CARD_OUTPUT_SIZE = 10
 
+
+
+BUTTONBAR_FRAME_PADX_INNER = 5
+BUTTONBAR_FRAME_PADY_INNER = 5
+BUTTONBAR_FRAME_PADX_OUTTER = 10
+BUTTONBAR_FRAME_PADY_OUTTER = 5
+
+BUTTONBAR_BUTTON_PADX = 5
 

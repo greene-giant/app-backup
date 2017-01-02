@@ -7,8 +7,6 @@ from settings import *
 import subprocess as subp
 import threading as thd
 
-sticky_all = (tk.N, tk.S, tk.E, tk.W)
-
 
 class ThreadedWrite(thd.Thread):
     def __init__(self, cardHolder, textBox, proc, tag):
