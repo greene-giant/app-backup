@@ -5,8 +5,29 @@ import verticalScrolledFrame as vsw
 from settings import *
 
 import subprocess as subp
+import threading as thd
 
 sticky_all = (tk.N, tk.S, tk.E, tk.W)
+
+
+class ThreadedWrite(thd.Thread):
+    def __init__(self, cardHolder, textBox, proc):
+        thd.Thread.__init__(self)
+        self.cardHolder = cardHolder
+        self.textBox = textBox
+        self.proc = proc
+
+    def run(self):
+        while True:
+            line = self.proc.stdout.readline().decode("utf-8")
+            if line == "" and self.proc.poll() != None:
+                break
+            elif line != "":
+                print(line.rstrip())
+                self.cardHolder.cards[-2].write_output(line.rstrip())
+                self.cardHolder.move_scrollbar_to_bottom()
+
+
 
 
 class OutputCard(tk.Frame):
@@ -196,17 +217,17 @@ class CardHolder(vsw.VerticalScrolledFrame):
                           stdout=subp.PIPE, 
                           stderr=subp.STDOUT)
 
-        #for line in iter(proc.stdout.readline, b''):
-        #    self.cards[-2].write_output(line)
+        t = ThreadedWrite(self, self.cards[-2], proc)
+        t.start()
 
-        while True:
-            line = proc.stdout.readline().decode("utf-8")
-            if line == "" and proc.poll() != None:
-                break
-            elif line != "":
-                print(line.rstrip())
-                self.cards[-2].write_output(line.rstrip())
-                self.move_scrollbar_to_bottom()
+        #while True:
+        #    line = proc.stdout.readline().decode("utf-8")
+        #    if line == "" and proc.poll() != None:
+        #        break
+        #    elif line != "":
+        #        print(line.rstrip())
+        #        self.cards[-2].write_output(line.rstrip())
+        #        self.move_scrollbar_to_bottom()
 
 
 

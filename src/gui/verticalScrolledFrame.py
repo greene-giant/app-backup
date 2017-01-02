@@ -1,6 +1,6 @@
 
 from tkinter import *
-from tkinter.ttk import *
+from tkinter import ttk
 
 class VerticalScrolledFrame(Frame):
     """A pure Tkinter scrollable frame that actually works!
@@ -13,10 +13,10 @@ class VerticalScrolledFrame(Frame):
     
     """
     def __init__(self, parent, *args, frameBackground=None, **kw):
-        Frame.__init__(self, parent, *args, **kw)            
+        Frame.__init__(self, parent, *args, background=frameBackground, **kw)            
 
         # create a canvas object and a vertical scrollbar for scrolling it
-        vscrollbar = Scrollbar(self, orient=VERTICAL)
+        vscrollbar = ttk.Scrollbar(self, orient=VERTICAL)
         vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
 
         self.canvas = canvas = Canvas(self, 
