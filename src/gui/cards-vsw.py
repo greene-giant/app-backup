@@ -4,7 +4,85 @@ from tkinter import ttk
 import verticalScrolledFrame as vsw
 from settings import *
 
+import subprocess as subp
+
 sticky_all = (tk.N, tk.S, tk.E, tk.W)
+
+
+class OutputCard(tk.Frame):
+    def __init__(self, *arg, title, source, destination, color, **kwargs):
+        # Call original __init__:
+        tk.Frame.__init__(self, *arg, background=COLOR_CARD, **kwargs)
+
+
+        # Add vertical bar:
+        bar = tk.Frame(self,
+                       background=color,
+                       width=CARD_BAR_WIDTH)
+        bar.pack(side=tk.LEFT, fill=tk.Y)
+
+
+        # Add content holder:
+        content = tk.Frame(self,
+                           background=COLOR_CARD)
+        content.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+
+        # Add title:
+        title = tk.Label(content,
+                         text = title,
+                         foreground = color,
+                         background = COLOR_CARD,
+                         font = (CARD_OUTPUT_TITLE_FONT, CARD_OUTPUT_TITLE_SIZE),
+                         anchor = tk.CENTER,
+                         pady = CARD_OUTPUT_TITLE_PADDING)
+        title.pack(fill=tk.X)
+
+
+        # Add directories:
+        dirs = tk.Text(content,
+                       height = 2,
+                       foreground = color,
+                       background = COLOR_CARD,
+                       font = (CARD_OUTPUT_FONT, CARD_OUTPUT_SIZE),
+                       padx = CARD_OUTPUT_PADDING_X,
+                       pady = CARD_OUTPUT_PADDING_Y,
+                       borderwidth = 0)
+        dirsText  = "Source      :: " + source + "\n"
+        dirsText += "Destination :: " + destination
+
+        dirs.insert(tk.END, dirsText)
+        dirs["state"] = "disabled"
+        dirs.pack(fill=tk.X)
+
+
+        # Add horizontal bar:
+        bar = tk.Frame(content,
+                       background = color,
+                       height = CARD_HBAR_WIDTH)
+        bar.pack(fill = tk.X)
+
+
+        # Add output:
+        self.output = output = tk.Text(content,
+                                       height = 1,
+                                       foreground = COLOR_NORMAL,
+                                       background = COLOR_CARD,
+                                       font = (CARD_OUTPUT_FONT, CARD_OUTPUT_SIZE),
+                                       padx = CARD_OUTPUT_PADDING_X,
+                                       pady = CARD_OUTPUT_PADDING_Y,
+                                       borderwidth = 0,
+                                       wrap=tk.NONE)
+        output["state"] = "disabled"
+        output.pack(fill = tk.BOTH, expand=True)
+
+
+    def write_output(self, line):
+        self.output["state"] = "normal"
+        self.output["height"] += 1
+        self.output.insert(tk.END, line + "\n")
+        self.output["state"] = "disabled"
+        self.output.update()
 
 
 
@@ -98,6 +176,40 @@ class CardHolder(vsw.VerticalScrolledFrame):
         self.move_scrollbar_to_top()
 
 
+    def start_test_output(self, title, source, destination, color):
+        self.cards.append(OutputCard(self.content,
+                                     title=title,
+                                     source=source,
+                                     destination=destination,
+                                     color=color))
+        self.cards[-1].pack(fill=tk.X)
+
+        self.add_card_spacing()
+        self.move_scrollbar_to_bottom()
+
+
+        # Run test script:
+        cmd = "python outputTest.py"
+        proc = subp.Popen(cmd, 
+                          shell=True, 
+                          bufsize=0, 
+                          stdout=subp.PIPE, 
+                          stderr=subp.STDOUT)
+
+        #for line in iter(proc.stdout.readline, b''):
+        #    self.cards[-2].write_output(line)
+
+        while True:
+            line = proc.stdout.readline().decode("utf-8")
+            if line == "" and proc.poll() != None:
+                break
+            elif line != "":
+                print(line.rstrip())
+                self.cards[-2].write_output(line.rstrip())
+                self.move_scrollbar_to_bottom()
+
+
+
 
 
 
@@ -117,6 +229,14 @@ class TestApp(tk.Tk):
         self.bind('a', 
                 lambda e, t="Starting Backup", c=COLOR_COPY: 
                 cardHolder.add_title_card(t, c))
+
+        self.bind('s',
+                lambda e: 
+                cardHolder.start_test_output(
+                    title="Test Output",
+                    source="the/source/directory",
+                    destination="the/destination/directory",
+                    color=COLOR_COPY))
 
         self.bind('d', 
                 lambda e, t="Backup Complete", c=COLOR_COPY: 

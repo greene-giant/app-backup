@@ -1,6 +1,7 @@
 
 import color.wombat
 
+COLOR_NORMAL  = color.wombat.white
 COLOR_COPY    = color.wombat.green
 COLOR_CLEAN   = color.wombat.red
 COLOR_CARD    = color.wombat.black
@@ -9,8 +10,19 @@ COLOR_PADDING = color.wombat.grayDark
 CARD_PADDING_X = 8
 CARD_PADDING_Y = 10
 CARD_BAR_WIDTH = 10
+CARD_HBAR_WIDTH = 5
 
 CARD_TITLE_PADDING = 20
 CARD_TITLE_FONT = "DejaVu Sans Mono"
 CARD_TITLE_SIZE = 16
+
+CARD_OUTPUT_TITLE_PADDING = 10
+CARD_OUTPUT_TITLE_FONT = "DejaVu Sans Mono"
+CARD_OUTPUT_TITLE_SIZE = 12
+
+CARD_OUTPUT_PADDING_X = 6
+CARD_OUTPUT_PADDING_Y = 6
+CARD_OUTPUT_FONT = "DejaVu Sans Mono"
+CARD_OUTPUT_SIZE = 10
+
 
