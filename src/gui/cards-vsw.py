@@ -87,7 +87,7 @@ class OutputCard(tk.Frame):
 
         # Add output:
         self.output = output = tk.Text(content,
-                                       height = 1,
+                                       height = 2,
                                        foreground = COLOR_NORMAL,
                                        background = COLOR_CARD,
                                        font = (CARD_OUTPUT_FONT, CARD_OUTPUT_SIZE),
@@ -96,6 +96,7 @@ class OutputCard(tk.Frame):
                                        borderwidth = 0,
                                        wrap=tk.NONE)
 
+        output.insert(tk.END, "\n")
         output["state"] = "disabled"
         output.tag_config("normal", foreground = COLOR_NORMAL)
         output.tag_config("clean", foreground = COLOR_CLEAN)
