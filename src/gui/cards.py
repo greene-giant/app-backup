@@ -1,8 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 
-import verticalScrolledFrame as vsw
-from settings import *
+try:
+    import verticalScrolledFrame as vsw
+    from guiSettings import *
+except:
+    from . import verticalScrolledFrame as vsw
+    from .guiSettings import *
 
 import subprocess as subp
 import threading as thd

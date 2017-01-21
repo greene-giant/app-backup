@@ -2,7 +2,10 @@
 import tkinter as tk
 from tkinter import ttk
 
-from settings import *
+try:
+    from guiSettings import *
+except:
+    from .guiSettings import *
 
 
 class FileTree(tk.Frame):
@@ -50,6 +53,18 @@ class FileTree(tk.Frame):
                            font = (TREE_FONT, TREE_SIZE),
                            anchor = tk.CENTER)
 
+        tree.tag_configure("error", 
+                           background = COLOR_CARD,
+                           foreground = COLOR_ERROR,
+                           font = (TREE_FONT, TREE_SIZE),
+                           anchor = tk.CENTER)
+
+        tree.tag_configure("ready", 
+                           background = COLOR_CARD,
+                           foreground = COLOR_READY,
+                           font = (TREE_FONT, TREE_SIZE),
+                           anchor = tk.CENTER)
+
 
     def delete_selected(self):
         try:
@@ -57,14 +72,24 @@ class FileTree(tk.Frame):
             print(selected)
             for s in selected:
                 self.tree.delete(s)
+
+            for s in self.tree.get_children():
+                print(self.tree.item(s))
         except:
             pass
+
 
     def add_dummy_entry(self):
         self.tree.insert("", tk.END, iid=None, tags = "normal",
                     values=("Name",
                             "Source",
                             "Destination"))
+        self.tree.yview_moveto(1)
+
+
+    def add_entry(self, name, src, dest):
+        self.tree.insert("", tk.END, iid=None, tags="normal",
+                    values=(name, src, dest))
         self.tree.yview_moveto(1)
 
 

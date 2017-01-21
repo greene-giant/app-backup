@@ -2,7 +2,11 @@
 import tkinter as tk
 from tkinter import ttk
 
-from settings import *
+try:
+    from guiSettings import *
+except:
+    from .guiSettings import *
+
 
 class ButtonBar(tk.Frame):
     def __init__(self, *arg, **kwargs):

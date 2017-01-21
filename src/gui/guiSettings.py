@@ -15,6 +15,8 @@ COLOR_COPY    = color.wombat.green
 COLOR_CLEAN   = color.wombat.red
 COLOR_CARD    = color.wombat.black
 COLOR_PADDING = color.wombat.grayDark
+COLOR_ERROR   = color.wombat.red
+COLOR_READY   = color.wombat.blue
 
 CARD_PADDING_X = 8
 CARD_PADDING_Y = 10
@@ -36,6 +38,7 @@ CARD_OUTPUT_SIZE = 10
 
 
 
+# Button bar settings:
 BUTTONBAR_FRAME_PADX_INNER = 5
 BUTTONBAR_FRAME_PADY_INNER = 5
 BUTTONBAR_FRAME_PADX_OUTTER = 10
@@ -47,11 +50,12 @@ BUTTONBAR_BUTTON_SIZE = 10
 
 
 
-
+# Treeview settings
 TREE_HEADING_FONT = "DejaVu Sans" 
 TREE_HEADING_SIZE = 12
 TREE_FONT = "DejaVu Sans Mono" 
 TREE_SIZE = 10
 
 TREE_NAME_WIDTH = 250
+TREE_FRACTION_HEIGHT = 0.3
 
