@@ -30,13 +30,13 @@ class MainAppGUI(tk.Tk):
         self.minsize(APP_MIN_WIDTH, APP_MIN_HEIGHT)
 
         # Build app GUI:
-        FT = fileTree.FileTree(self, height=int(TREE_FRACTION_HEIGHT*APP_HEIGHT))
+        self.FT = FT = fileTree.FileTree(self, height=int(TREE_FRACTION_HEIGHT*APP_HEIGHT))
         FT.pack(fill = tk.X, expand = False)
 
-        BB = buttonBar.ButtonBar(self)
+        self.BB = BB = buttonBar.ButtonBar(self)
         BB.pack(fill = tk.X)
 
-        CH = cards.CardHolder(self)
+        self.CH = CH = cards.CardHolder(self)
         CH.pack(fill = tk.BOTH, expand = True)
 
 
