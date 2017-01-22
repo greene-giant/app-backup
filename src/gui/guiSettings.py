@@ -10,13 +10,14 @@ APP_WIDTH = 1000
 APP_MIN_HEIGHT = 800
 APP_MIN_WIDTH = 800
 
-COLOR_NORMAL  = color.wombat.white
-COLOR_COPY    = color.wombat.green
-COLOR_CLEAN   = color.wombat.red
-COLOR_CARD    = color.wombat.black
-COLOR_PADDING = color.wombat.grayDark
-COLOR_ERROR   = color.wombat.red
-COLOR_READY   = color.wombat.blue
+COLOR_NORMAL   = color.wombat.white
+COLOR_COPY     = color.wombat.green
+COLOR_CLEAN    = color.wombat.red
+COLOR_CARD     = color.wombat.black
+COLOR_PADDING  = color.wombat.grayDark
+COLOR_ERROR    = color.wombat.red
+COLOR_READY    = color.wombat.blue
+COLOR_DIRCHECK = color.wombat.blue
 
 CARD_PADDING_X = 8
 CARD_PADDING_Y = 10

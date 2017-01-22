@@ -65,22 +65,22 @@ class FileTree(tk.Frame):
                            font = (TREE_FONT, TREE_SIZE),
                            anchor = tk.CENTER)
 
+        # Bindings:
+        self.bind('<Delete>',
+                lambda e: fileTree.delete_selected()) # This doesn't work?
+
 
     def delete_selected(self):
         try:
             selected = self.tree.selection()
-            print(selected)
             for s in selected:
                 self.tree.delete(s)
-
-            for s in self.tree.get_children():
-                print(self.tree.item(s))
         except:
             pass
 
 
     def add_dummy_entry(self):
-        self.tree.insert("", tk.END, iid=None, tags = "normal",
+        self.tree.insert("", tk.END, iid=None, tags ="normal",
                     values=("Name",
                             "Source",
                             "Destination"))

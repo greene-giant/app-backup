@@ -12,7 +12,7 @@ import subprocess as subp
 import threading as thd
 
 
-class ThreadedWrite(thd.Thread):
+class ThreadedProcWrite(thd.Thread):
     def __init__(self, cardHolder, textBox, proc, tag):
         thd.Thread.__init__(self)
         self.cardHolder = cardHolder
@@ -34,7 +34,7 @@ class ThreadedWrite(thd.Thread):
 
 
 class OutputCard(tk.Frame):
-    def __init__(self, *arg, title, source, destination, color, **kwargs):
+    def __init__(self, *arg, title, source=None, destination=None, color, **kwargs):
         # Call original __init__:
         tk.Frame.__init__(self, *arg, background=COLOR_CARD, **kwargs)
 
@@ -64,20 +64,21 @@ class OutputCard(tk.Frame):
 
 
         # Add directories:
-        dirs = tk.Text(content,
-                       height = 2,
-                       foreground = color,
-                       background = COLOR_CARD,
-                       font = (CARD_OUTPUT_FONT, CARD_OUTPUT_SIZE),
-                       padx = CARD_OUTPUT_PADDING_X,
-                       pady = CARD_OUTPUT_PADDING_Y,
-                       borderwidth = 0)
-        dirsText  = "Source      :: " + source + "\n"
-        dirsText += "Destination :: " + destination
+        if source and destination:
+            dirs = tk.Text(content,
+                           height = 2,
+                           foreground = color,
+                           background = COLOR_CARD,
+                           font = (CARD_OUTPUT_FONT, CARD_OUTPUT_SIZE),
+                           padx = CARD_OUTPUT_PADDING_X,
+                           pady = CARD_OUTPUT_PADDING_Y,
+                           borderwidth = 0)
+            dirsText  = "Source      :: " + source + "\n"
+            dirsText += "Destination :: " + destination
 
-        dirs.insert(tk.END, dirsText)
-        dirs["state"] = "disabled"
-        dirs.pack(fill=tk.X)
+            dirs.insert(tk.END, dirsText)
+            dirs["state"] = "disabled"
+            dirs.pack(fill=tk.X)
 
 
         # Add horizontal bar:
@@ -102,6 +103,9 @@ class OutputCard(tk.Frame):
         output["state"] = "disabled"
         output.tag_config("normal", foreground = COLOR_NORMAL)
         output.tag_config("clean", foreground = COLOR_CLEAN)
+        output.tag_config("error", foreground = COLOR_ERROR)
+        output.tag_config("dir check", foreground = COLOR_DIRCHECK)
+        output.tag_config("center", justify='center')
 
         output.pack(fill = tk.BOTH, expand=True)
 
@@ -205,6 +209,20 @@ class CardHolder(vsw.VerticalScrolledFrame):
         self.move_scrollbar_to_top()
 
 
+    def add_dirCheck_card(self, color):
+        self.cards.append(OutputCard(self.content,
+                                     title="Checking Directories",
+                                     color=color))
+        self.cards[-1].pack(fill=tk.X)
+
+        self.add_card_spacing()
+        self.move_scrollbar_to_bottom()
+
+
+    def get_current_card(self):
+        return self.cards[-2]
+
+
     def start_test_output(self, title, source, destination, color):
         self.cards.append(OutputCard(self.content,
                                      title=title,
@@ -225,7 +243,7 @@ class CardHolder(vsw.VerticalScrolledFrame):
                           stdout=subp.PIPE, 
                           stderr=subp.STDOUT)
 
-        t = ThreadedWrite(self, self.cards[-2], proc, "normal")
+        t = ThreadedProcWrite(self, self.cards[-2], proc, "normal")
         t.start()
 
 
