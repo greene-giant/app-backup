@@ -8,6 +8,7 @@ import gui.main
 
 import subprocess as subp
 import threading as thd
+import time
 
 class ThreadedDirectoryCheck(thd.Thread):
     def __init__(self, tree, card):
@@ -17,7 +18,9 @@ class ThreadedDirectoryCheck(thd.Thread):
         self.allExist = True
 
     def run(self):
-        for e in self.tree.get_children():
+        backupList = self.tree.get_children()
+
+        for e in backupList:
             [name, src, dest] = self.tree.item(e)['values']
             srcExist  = os.path.exists(src)
             destExist = os.path.exists(dest)
@@ -53,6 +56,9 @@ class ThreadedDirectoryCheck(thd.Thread):
 
                 self.card.write_output("\n")
 
+            if e != backupList[-1]:
+                time.sleep(BACK_PAUSE)
+
 
 class BackupThread(thd.Thread):
     def __init__(self, tree, CH):
@@ -61,18 +67,26 @@ class BackupThread(thd.Thread):
         self.CH = CH
 
     def run(self):
-        for e in self.tree.get_children():
+        backupList = self.tree.get_children()
+
+        # Start card:
+        self.CH.add_title_card("Starting Backup",
+                               COLOR_COPY)
+
+        # Backup
+        for e in backupList:
             [name, src, dest] = self.tree.item(e)['values']
 
             # Create card:
             self.CH.add_output_card(name, src, dest, COLOR_COPY)
             card = self.CH.get_current_card()
 
-            # Create proc:
+            # Create cmd:
             cp = 'xcopy '
             flags = r' /s /D /y'
             cmd = cp + r'"' + src + r'" "' + dest + r'" ' + flags
 
+            # Run backup:
             proc = subp.Popen(cmd, 
                               shell=True,
                               bufsize=0,
@@ -84,9 +98,53 @@ class BackupThread(thd.Thread):
                 if line == "" and proc.poll() != None:
                     break
                 elif line != "":
-                    print(line.rstrip())
                     card.write_output(line.rstrip(), "normal")
                     self.CH.move_scrollbar_to_bottom()
+
+
+            # Add space for remove check:
+            card.write_output(" ", "normal")
+
+            # Find old files:
+            numOldFiles = 0
+
+            for fullDirName, subDirList, fileList in os.walk(dest):
+                lenDest = len(dest)
+                dirName = fullDirName[lenDest:]
+
+                if os.path.exists(src + dirName):
+                    for f in fileList:
+                        if os.path.exists(src + dirName + "\\" + f):
+                            pass
+                        else:
+                            if dirName:
+                                fileName = dirName[1:] + '\\' + f
+                            else:
+                                fileName = f
+
+                            numOldFiles += 1
+                            card.write_output(fileName, "clean")
+
+                else:
+                    if fileList:
+                        for f in fileList:
+                            fileName = dirName[1:] + '\\' + f
+                            numOldFiles += 1
+                            card.write_output(fileName, "clean")
+                    else:
+                        numOldFiles += 1
+                        card.write_output(dirName[1:] + '\\', "clean")
+
+            card.write_output("{} Old file(s)".format(numOldFiles), "normal")
+
+            
+            # Add a pause between cards:
+            if e != backupList[-1]:
+                time.sleep(BACK_PAUSE)
+
+        # End card:
+        self.CH.add_title_card("Backup Completed",
+                               COLOR_COPY)
             
 
 
