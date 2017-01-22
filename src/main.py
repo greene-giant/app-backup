@@ -3,12 +3,23 @@ import os
 
 from settings import *
 from dirs import *
-from gui.guiSettings import COLOR_DIRCHECK, COLOR_COPY
+from gui.guiSettings import COLOR_DIRCHECK, COLOR_COPY, COLOR_CLEAN
 import gui.main
+from oldFileLogic import old_file_list
 
 import subprocess as subp
 import threading as thd
 import time
+
+
+CANCEL_BACKUP = False
+CANCEL_CLEAN = False
+
+BACKUP_DONE = False
+CLEAN_DONE = False
+
+RUNNING = False
+
 
 class ThreadedDirectoryCheck(thd.Thread):
     def __init__(self, tree, card):
@@ -67,6 +78,12 @@ class BackupThread(thd.Thread):
         self.CH = CH
 
     def run(self):
+        global BACKUP_DONE
+        global RUNNING
+
+        RUNNING = True
+
+        # Get backup list
         backupList = self.tree.get_children()
 
         # Start card:
@@ -105,37 +122,13 @@ class BackupThread(thd.Thread):
             # Add space for remove check:
             card.write_output(" ", "normal")
 
+
             # Find old files:
-            numOldFiles = 0
+            oldFiles = old_file_list(src, dest)
+            for f in oldFiles:
+                card.write_output(f, "clean")
 
-            for fullDirName, subDirList, fileList in os.walk(dest):
-                lenDest = len(dest)
-                dirName = fullDirName[lenDest:]
-
-                if os.path.exists(src + dirName):
-                    for f in fileList:
-                        if os.path.exists(src + dirName + "\\" + f):
-                            pass
-                        else:
-                            if dirName:
-                                fileName = dirName[1:] + '\\' + f
-                            else:
-                                fileName = f
-
-                            numOldFiles += 1
-                            card.write_output(fileName, "clean")
-
-                else:
-                    if fileList:
-                        for f in fileList:
-                            fileName = dirName[1:] + '\\' + f
-                            numOldFiles += 1
-                            card.write_output(fileName, "clean")
-                    else:
-                        numOldFiles += 1
-                        card.write_output(dirName[1:] + '\\', "clean")
-
-            card.write_output("{} Old file(s)".format(numOldFiles), "normal")
+            card.write_output("{} Old file(s)".format(len(oldFiles)), "normal")
 
             
             # Add a pause between cards:
@@ -145,7 +138,68 @@ class BackupThread(thd.Thread):
         # End card:
         self.CH.add_title_card("Backup Completed",
                                COLOR_COPY)
+ 
+        BACKUP_DONE = True
+        RUNNING = False
             
+
+
+
+class CleanThread(thd.Thread):
+    def __init__(self, tree, CH):
+        thd.Thread.__init__(self)
+        self.tree = tree
+        self.CH = CH
+
+    def run(self):
+        global CLEAN_DONE
+        global RUNNING
+        RUNNING = True
+
+        backupList = self.tree.get_children()
+
+        # Start card:
+        self.CH.add_title_card("Starting Clean",
+                               COLOR_CLEAN)
+
+        # Clean
+        for e in backupList:
+            [name, src, dest] = self.tree.item(e)['values']
+
+            # Create card:
+            self.CH.add_output_card(name, src, dest, COLOR_CLEAN)
+            card = self.CH.get_current_card()
+
+            # Do clean:
+            oldFiles = old_file_list(src, dest)
+            numFiles = 0
+
+            for f in oldFiles:
+                if f[0] != 'C' and f[0] != 'c':
+                    if os.path.isdir(f):
+                        os.removedirs(f)
+
+                    elif os.path.isfile(f):
+                        os.remove(f)
+
+                    card.write_output(f, COLOR_CLEAN)
+                    numFiles += 1
+
+            card.write_output("{} File(s) removed".format(numFiles), "normal")
+
+
+
+            # Add a pause between cards:
+            if e != backupList[-1]:
+                time.sleep(BACK_PAUSE)
+
+        # End card:
+        self.CH.add_title_card("Clean Completed",
+                               COLOR_CLEAN)
+
+        CLEAN_DONE = True
+        RUNNING = False
+
 
 
 
@@ -246,19 +300,26 @@ class MainApp(gui.main.MainAppGUI):
 
 
     def _on_start_press(self):
-        if self.dirs_all_found:
+        if self.dirs_all_found and not RUNNING:
             t = BackupThread(self.FT.tree, self.CH)
             t.start()
 
         else:
             self.CH.add_title_card("Directory check must pass before backup",
-                                   COLOR_DIRCHECK)
+                                   COLOR_COPY)
 
 
 
 
     def _on_clean_press(self):
-        print("** New clean pressed **")
+        print(BACKUP_DONE)
+        if BACKUP_DONE and not RUNNING:
+            t = CleanThread(self.FT.tree, self.CH)
+            t.start()
+
+        else:
+            self.CH.add_title_card("Backup must be completed before clean",
+                                   COLOR_CLEAN)
 
     def _on_cancel_press(self):
         print("** New cancel pressed **")
