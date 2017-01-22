@@ -2,9 +2,11 @@
 import os
 
 from settings import *
-from gui.guiSettings import COLOR_DIRCHECK
+from dirs import *
+from gui.guiSettings import COLOR_DIRCHECK, COLOR_COPY
 import gui.main
 
+import subprocess as subp
 import threading as thd
 
 class ThreadedDirectoryCheck(thd.Thread):
@@ -52,6 +54,42 @@ class ThreadedDirectoryCheck(thd.Thread):
                 self.card.write_output("\n")
 
 
+class BackupThread(thd.Thread):
+    def __init__(self, tree, CH):
+        thd.Thread.__init__(self)
+        self.tree = tree
+        self.CH = CH
+
+    def run(self):
+        for e in self.tree.get_children():
+            [name, src, dest] = self.tree.item(e)['values']
+
+            # Create card:
+            self.CH.add_output_card(name, src, dest, COLOR_COPY)
+            card = self.CH.get_current_card()
+
+            # Create proc:
+            cp = 'xcopy '
+            flags = r' /s /D /y'
+            cmd = cp + r'"' + src + r'" "' + dest + r'" ' + flags
+
+            proc = subp.Popen(cmd, 
+                              shell=True,
+                              bufsize=0,
+                              stdout=subp.PIPE,
+                              stderr=subp.STDOUT)
+
+            while True:
+                line = proc.stdout.readline().decode("utf-8")
+                if line == "" and proc.poll() != None:
+                    break
+                elif line != "":
+                    print(line.rstrip())
+                    card.write_output(line.rstrip(), "normal")
+                    self.CH.move_scrollbar_to_bottom()
+            
+
+
 
 class MainApp(gui.main.MainAppGUI):
     def __init__(self, *arg, **kwargs):
@@ -87,6 +125,7 @@ class MainApp(gui.main.MainAppGUI):
 
     def _on_save_press(self):
         print("** New save pressed **")
+
 
     def _on_check_press(self):
         # Checks that all the source and desitination directories exist
@@ -147,8 +186,18 @@ class MainApp(gui.main.MainAppGUI):
     def _on_change_press(self):
         print("** New change pressed **")
 
+
     def _on_start_press(self):
-        print("** New start pressed **")
+        if self.dirs_all_found:
+            t = BackupThread(self.FT.tree, self.CH)
+            t.start()
+
+        else:
+            self.CH.add_title_card("Directory check must pass before backup",
+                                   COLOR_DIRCHECK)
+
+
+
 
     def _on_clean_press(self):
         print("** New clean pressed **")

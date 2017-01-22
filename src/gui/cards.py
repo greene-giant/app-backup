@@ -219,6 +219,18 @@ class CardHolder(vsw.VerticalScrolledFrame):
         self.move_scrollbar_to_bottom()
 
 
+    def add_output_card(self, title, source, destination, color):
+        self.cards.append(OutputCard(self.content,
+                                     title=title,
+                                     source=source,
+                                     destination=destination,
+                                     color=color))
+        self.cards[-1].pack(fill=tk.X)
+
+        self.add_card_spacing()
+        self.move_scrollbar_to_bottom()
+
+
     def get_current_card(self):
         return self.cards[-2]
 
