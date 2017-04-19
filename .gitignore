@@ -1,5 +1,7 @@
 # Files:
 dirs.py
+backupDirs.py
+testBackupDirs.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

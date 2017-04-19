@@ -2,7 +2,12 @@
 import os
 
 from settings import *
-from dirs import *
+
+try:
+    from backupDirs import *
+except:
+    from testBackupDirs import *
+
 from gui.guiSettings import COLOR_DIRCHECK, COLOR_COPY, COLOR_CLEAN
 import gui.main
 from oldFileLogic import old_file_list
@@ -117,6 +122,7 @@ class BackupThread(thd.Thread):
                 elif line != "":
                     card.write_output(line.rstrip(), "normal")
                     self.CH.move_scrollbar_to_bottom()
+                    print(line.rstrip())
 
 
             # Add space for remove check:
