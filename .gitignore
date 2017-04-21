@@ -2,6 +2,7 @@
 dirs.py
 backupDirs.py
 testBackupDirs.py
+testSaveFormat.save
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
