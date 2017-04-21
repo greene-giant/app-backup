@@ -1,3 +1,9 @@
+"""
+
+This is the command line parser for the backup app. After importing, the command
+line arguments are in the 'arg' variable.
+
+"""
 
 import argparse
 
@@ -20,10 +26,10 @@ parser.add_argument('-s', '--save',
                     help='Save file for backup directories list*')
 
 
-
+# Parse the command line:
+args = parser.parse_args()
 
 if __name__ == "__main__":
-    arg = parser.parse_args()
-    print("ui = " + str(arg.ui))
-    print("saveFile = " + str(arg.saveFile))
+    print("ui = " + str(args.ui))
+    print("saveFile = " + str(args.saveFile))
 
