@@ -7,19 +7,16 @@ Provides the file list element for the terminal ui.
 from function.configure import config
 from function.save import Directories
 from ui.terminal.card import CardPrinter, clearTerminal
-
 import os
-from textwrap import TextWrapper
-import subprocess as subp
 
 
-class DirectoryView(object):
+class DirectoryManager(object):
     """
     Class that provides the directory view element.
     """
 
-    def __init__(self, dirs):
-        self.dirs = dirs
+    def __init__(self):
+        self.dirs = Directories()
         self.dirs.readSaveFile()
         self.cardPrinter = CardPrinter()
 
@@ -74,31 +71,34 @@ class DirectoryView(object):
 
         # Print the directories:       
         first = True
-        for k, v in sorted(self.dirs.dirs.items()):
-            if not first:
-                self.cardPrinter.line()
+        if len(self.dirs.dirs) == 0:
+            self.cardPrinter.lineCentered("No directories saved")
+        else:
+            for k, v in sorted(self.dirs.dirs.items()):
+                if not first:
+                    self.cardPrinter.line()
 
-            nameColor = None
-            srcColor  = None
-            destColor = None
+                nameColor = None
+                srcColor  = None
+                destColor = None
 
-            if self.ranCheckDirs:
-                nameColor = validColor
-                srcColor  = validColor
-                destColor = validColor
+                if self.ranCheckDirs:
+                    nameColor = validColor
+                    srcColor  = validColor
+                    destColor = validColor
 
-                if not self.valid[k]['src']:
-                    srcColor  = invalidColor
-                    nameColor = invalidColor
+                    if not self.valid[k]['src']:
+                        srcColor  = invalidColor
+                        nameColor = invalidColor
 
-                if not self.valid[k]['dest']:
-                    destColor = invalidColor
-                    nameColor = invalidColor
+                    if not self.valid[k]['dest']:
+                        destColor = invalidColor
+                        nameColor = invalidColor
 
-            self.cardPrinter.line(k, nameColor)
-            self.cardPrinter.line("Source      :: " + v["src"],  srcColor)
-            self.cardPrinter.line("Destination :: " + v["dest"], destColor)
-            first = False
+                self.cardPrinter.line(k, nameColor)
+                self.cardPrinter.line("Source      :: " + v["src"],  srcColor)
+                self.cardPrinter.line("Destination :: " + v["dest"], destColor)
+                first = False
 
 
     def addDir(self, name, src, dest, opt=""):
@@ -114,9 +114,7 @@ class DirectoryView(object):
 
 
 if __name__ == "__main__":
-    dirs = Directories()
-
-    FL = DirectoryView(dirs)
+    FL = DirectoryManager()
     FL.printView()
     s = input('Initial print. Press enter to continue...')
 
@@ -135,5 +133,10 @@ if __name__ == "__main__":
     FL.removeDir('Bad Directory')
     FL.printView()
     s = input('Removed bad directory. Press enter to continue...')
+
+    FL.removeDir("Directory 1")
+    FL.removeDir("Directory 2")
+    FL.printView()
+    print("Removed all directories.")
 
 

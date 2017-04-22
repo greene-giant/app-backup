@@ -37,14 +37,14 @@ class CardPrinter(object):
         self.colorConvert['red']   = terminal.red
 
 
-    def line(self, line = " ", color = None):
+    def line(self, line = " ", color = None, indent = " "):
         vert  = config['terminal']['verticalMark']
         width = self.width
         resetColor = terminal.get_color()
 
         wrapper = TextWrapper(width = width,
                               break_long_words = True,
-                              subsequent_indent = " ",
+                              subsequent_indent = indent,
                               drop_whitespace = False)
 
         allLines = wrapper.wrap(line)
@@ -67,7 +67,7 @@ class CardPrinter(object):
 
 
     def lineCentered(self, line):
-        self.line(line.center(self.width))
+        self.line(line.center(self.width), indent="")
 
 
     def separator(self):
