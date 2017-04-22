@@ -6,7 +6,11 @@ Provides the file list element for the terminal ui.
 
 from function.configure import config
 from function.save import Directories
+from ui.terminal.card import CardPrinter
+
+import os
 from textwrap import TextWrapper
+import subprocess as subp
 
 
 class DirectoryView(object):
@@ -17,94 +21,56 @@ class DirectoryView(object):
     def __init__(self, dirs):
         self.dirs = dirs.dirs
         dirs.readSaveFile()
+        self.cardPrinter = CardPrinter()
 
         # Create validation dictionary:
+        self.allValid = False
         self.valid = {}
         for k, v in self.dirs.items():
-            self.valid[k] = None
+            self.valid[k] = {}
+            self.valid[k]['src'] = None
+            self.valid[k]['dest'] = None
 
         # Save the width since it needs to be altered:
         self.textWidth = int(config['terminal']['width']) - 5
 
 
     def checkDirs(self):
-        pass
+        self.allValid = True
 
-
-    def printLine(self, line = " "):
-        vert  = config['terminal']['verticalMark']
-        width = self.textWidth
-
-        wrapper = TextWrapper(width = width,
-                              break_long_words = True,
-                              subsequent_indent = " ",
-                              drop_whitespace = False)
-
-        allLines = wrapper.wrap(line)
-
-        for line in allLines:
-            if len(line) < width:
-                line += (width - len(line))*" "
-
-            print(vert + " " + line + " " + vert)
-
-
-    def printLineCenter(self, line):
-        self.printLine(line.center(self.textWidth))
-
-
-    def printSeparator(self):
-        horiz = config['terminal']['horizontalMark']
-        vert  = config['terminal']['verticalMark']
-
-        print(vert + (self.textWidth + 2)*horiz + vert)
-
-
-    def printHeader(self):
-        horiz = config['terminal']['horizontalMark']
-        left  = config['terminal']['upperLeftMark']
-        right = config['terminal']['upperRightMark']
-
-        print(left + (self.textWidth + 2)*horiz + right)
-
-
-    def printFooter(self):
-        horiz = config['terminal']['horizontalMark']
-        left  = config['terminal']['lowerLeftMark']
-        right = config['terminal']['lowerRightMark']
-
-        print(left + (self.textWidth + 2)*horiz + right)
+        for k, v in self.dirs.items():
+            self.valid[k]['src']  = os.path.exists(v['src'])
+            self.valid[k]['dest'] = os.path.exists(v['dest'])
+            self.allValid = ( self.allValid and 
+                              self.valid[k]['src'] and 
+                              self.valid[k]['dest'] )
         
 
 
     def printView(self):
-        vert  = config['terminal']['verticalMark']
-        horiz = config['terminal']['horizontalMark']
-        width = int(config['terminal']['width'])
+        # Get color settings:
 
-        wrapper = TextWrapper(initial_indent = vert + " ",
-                              subsequent_indent = vert + " ",
-                              width = width,
-                              drop_whitespace = False,
-                              break_long_words = True)
+        # Clear the terminal:
+        subp.run(["reset"])
 
+        # Print the directories:
         print("")
-        self.printHeader()
-        self.printLine()
-        self.printLineCenter("Directories")
-        self.printSeparator()
+        self.cardPrinter.header()
+        self.cardPrinter.line()
+        self.cardPrinter.lineCentered("Directories")
+        self.cardPrinter.separator()
        
         first = True
         for k, v in sorted(self.dirs.items()):
             if not first:
-                self.printLine()
+                self.cardPrinter.line()
 
-            self.printLine("Name        :: " + k)
-            self.printLine("Source      :: " + v["src"])
-            self.printLine("Destination :: " + v["dest"])
+            self.cardPrinter.line("Name        :: " + k)
+            self.cardPrinter.line("Source      :: " + v["src"])
+            self.cardPrinter.line("Destination :: " + v["dest"])
             first = False
 
-        self.printFooter()
+        self.cardPrinter.footer()
         print("")
 
 
