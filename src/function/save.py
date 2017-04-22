@@ -17,7 +17,7 @@ class Directories(object):
 
     def __init__(self):
         self.saveFile = config['general']['saveFile']
-        self.saveDirs = {}
+        self.dirs = {}
 
 
     def changeSaveFile(self, saveFile):
@@ -25,21 +25,21 @@ class Directories(object):
 
 
     def addEntry(self, name, source, dest, option=""):
-        self.saveDirs[name] = {'source' : source,
-                               'dest'   : dest,
-                               'opt'    : option}
+        self.dirs[name] = {'src'  : source,
+                           'dest' : dest,
+                           'opt'  : option}
 
 
     def removeEntry(self, name):
-        del self.saveDirs[name]
+        del self.dirs[name]
 
 
     def writeSaveFile(self):
         f = open(self.saveFile, 'w')
 
-        for k, v in self.saveDirs.items():
+        for k, v in self.dirs.items():
             f.write("\n" + k + "\n")
-            f.write(v['source'] + "\n")
+            f.write(v['src'] + "\n")
             f.write(v['dest'] + "\n")
             f.write(v['opt'] + "\n")
 
@@ -65,10 +65,10 @@ class Directories(object):
 
 
     def printEntries(self):
-        for k, v in self.saveDirs.items():
+        for k, v in self.dirs.items():
             print("\n")
             print("Name        :: " + k)
-            print("source      :: " + v['source'])
+            print("source      :: " + v['src'])
             print("destination :: " + v['dest'])
             if v['opt']:
                 print("options     :: " + v['opt'])
@@ -76,11 +76,16 @@ class Directories(object):
 
 
 if __name__ == "__main__":
-    newSaveFile = r'function/testSaveFormat.save'
+    newSaveFile = r'testBackup.save'
 
     dirs1 = Directories()
-    dirs1.addEntry('e1', r'/path/to/source1', r'/path/to/dest1')
-    dirs1.addEntry('e2', r'/path/to/source2', r'/path/to/dest2', 'b')
+    dirs1.addEntry('e1', 
+                    r'.\test\src1', 
+                    r'.\test\dest1')
+
+    dirs1.addEntry('e2', 
+                   r'.\test\src2', 
+                   r'.\test\dest2')
     dirs1.changeSaveFile(newSaveFile)
     dirs1.writeSaveFile()
 

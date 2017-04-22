@@ -30,7 +30,7 @@ for n in range(N):
 
 
 # Parse config file:
-config.read(filename)
+config.read(filename, encoding='utf8')
 
 
 
