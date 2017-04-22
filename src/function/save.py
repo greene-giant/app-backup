@@ -79,11 +79,11 @@ if __name__ == "__main__":
     newSaveFile = r'testBackup.save'
 
     dirs1 = Directories()
-    dirs1.addEntry('e1', 
+    dirs1.addEntry('Directory 1', 
                     r'.\test\src1', 
                     r'.\test\dest1')
 
-    dirs1.addEntry('e2', 
+    dirs1.addEntry('Directory 2', 
                    r'.\test\src2', 
                    r'.\test\dest2')
     dirs1.changeSaveFile(newSaveFile)

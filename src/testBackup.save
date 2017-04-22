@@ -1,10 +1,10 @@
 
-e2
-.\test\src2
-.\test\dest2
-
-
-e1
+Directory 1
 .\test\src1
 .\test\dest1
+
+
+Directory 2
+.\test\src2
+.\test\dest2
 

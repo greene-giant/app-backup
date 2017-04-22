@@ -5,8 +5,23 @@ Provides a class for printing output cards to terminal.
 """
 
 from textwrap import TextWrapper
-import color.terminal as color
+import color.terminal as terminal
 from function.configure import config
+import sys
+import subprocess as subp
+
+
+def printFlush(*arg, **kwargs):
+    """
+    A wrapper for print that flushes the output after every call. Needed when
+    changing terminal colors multiple times in a single line. 
+    """
+    print(*arg, **kwargs)
+    sys.stdout.flush()
+
+
+def clearTerminal():
+    subp.run(["reset"])
 
 
 class CardPrinter(object):
@@ -17,10 +32,15 @@ class CardPrinter(object):
     def __init__(self):
         self.width = int(config['terminal']['width']) - 5
 
+        self.colorConvert = {}
+        self.colorConvert['green'] = terminal.green
+        self.colorConvert['red']   = terminal.red
 
-    def line(self, line = " "):
+
+    def line(self, line = " ", color = None):
         vert  = config['terminal']['verticalMark']
         width = self.width
+        resetColor = terminal.get_color()
 
         wrapper = TextWrapper(width = width,
                               break_long_words = True,
@@ -33,7 +53,17 @@ class CardPrinter(object):
             if len(line) < width:
                 line += (width - len(line))*" "
 
-            print(vert + " " + line + " " + vert)
+            printFlush(vert, end = "")
+
+            if color:
+                terminal.set_color(self.colorConvert[color])
+            
+            printFlush(" " + line + " ", end = "")
+
+            if color:
+                terminal.set_color(resetColor)
+
+            printFlush(vert)
 
 
     def lineCentered(self, line):
@@ -44,10 +74,7 @@ class CardPrinter(object):
         horiz = config['terminal']['horizontalMark']
         vert  = config['terminal']['verticalMark']
 
-        reset = color.get_color()
-        color.set_color(color.red)
         print(vert + (self.width + 2)*horiz + vert)
-        color.set_color(reset)
 
 
     def header(self):
