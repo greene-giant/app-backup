@@ -25,6 +25,9 @@ class Directories(object):
 
 
     def addEntry(self, name, source, dest, option=""):
+        source = source.replace("\\", "/")
+        dest   = dest.replace("\\", "/")
+
         self.dirs[name] = {'src'  : source,
                            'dest' : dest,
                            'opt'  : option}
@@ -58,6 +61,9 @@ class Directories(object):
                     source = f.readline().strip()
                     dest   = f.readline().strip()
                     opt    = f.readline().strip()
+
+                    source = source.replace("\\", "/")
+                    dest   = dest.replace("\\", "/")
 
                     self.addEntry(name, source, dest, opt)
 

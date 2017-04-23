@@ -86,10 +86,10 @@ class Menu(object):
         CP.footer()
         print("")
 
-        opt = input("Your selection (q to quit) : ")
+        opt = input(" Your selection (q to quit) : ")
 
         while (opt not in dirOptions and opt not in backupOptions and opt != "q"):
-            opt = input("Invalid option. Please select again (q to quit) : ")
+            opt = input(" Invalid option. Please select again (q to quit) : ")
 
         return opt
 
@@ -125,21 +125,21 @@ class Menu(object):
 
     def opt_add(self):
         print(" ")
-        print("Adding new directory")
-        name = input("Name :: ")
+        print(" Adding new directory")
+        name = input(" Name :: ")
 
-        src = input("Path to source directory :: ")
+        src = input(" Path to source directory       :: ")
         while (not self.DM.dirExists(src)):
             print("")
-            terminal.printColor(terminal.red, "Directory does not exists.")
-            src = input("Path to source directory :: ")
+            terminal.printColor(terminal.red, " Directory does not exists.")
+            src = input(" Path to source directory       :: ")
 
 
-        dest = input("Path to destination directory :: ")
+        dest = input(" Path to destination directory :: ")
         while (not self.DM.dirExists(dest)):
             print("")
-            terminal.printColor(terminal.red, "Directory does not exists.")
-            dest = input("Path to destination directory :: ")
+            terminal.printColor(terminal.red, " Directory does not exists.")
+            dest = input(" Path to destination directory :: ")
 
 
         # Confirm the new directory:
@@ -161,7 +161,7 @@ class Menu(object):
 
 
     def opt_save(self):
-        self.DM.saveDirectories
+        self.DM.saveDirectories()
         self.previousOpt = "Save directories"
 
 

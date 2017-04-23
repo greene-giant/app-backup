@@ -6,8 +6,10 @@ testSaveFormat.save
 
 src/test/src1
 src/test/src2
+src/test/src3
 src/test/dest1
 src/test/dest2
+src/test/dest3
 
 
 # Byte-compiled / optimized / DLL files
