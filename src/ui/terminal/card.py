@@ -33,8 +33,14 @@ class CardPrinter(object):
         self.width = int(config['terminal']['width']) - 5
 
         self.colorConvert = {}
-        self.colorConvert['green'] = terminal.green
-        self.colorConvert['red']   = terminal.red
+        self.colorConvert['black']    = terminal.black
+        self.colorConvert['blue']     = terminal.blue
+        self.colorConvert['green']    = terminal.green
+        self.colorConvert['cyan']     = terminal.cyan
+        self.colorConvert['red']      = terminal.red
+        self.colorConvert['magenta']  = terminal.magenta
+        self.colorConvert['yellow']   = terminal.yellow
+        self.colorConvert['grey']     = terminal.grey
 
 
     def line(self, line = " ", color = None, indent = " "):

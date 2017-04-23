@@ -6,7 +6,7 @@ The main class for the terminal UI.
 
 from function.configure import config
 from ui.terminal.card import CardPrinter, clearTerminal
-from directoryManger import DirectoryManager
+from directoryManager import DirectoryManager
 
 class MainTerminal(object):
     """

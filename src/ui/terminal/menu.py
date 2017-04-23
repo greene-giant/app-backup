@@ -6,6 +6,7 @@ A class providing the menu functionality.
 
 from ui.terminal.card import CardPrinter, clearTerminal
 from ui.terminal.directoryManager import DirectoryManager
+import color.terminal as terminal
 
 
 dirOptions = {"1" : "Add",
@@ -20,12 +21,14 @@ backupOptions = {"a" : "Start",
 
 class Menu(object):
     """
-    The menu class.
+    The menu class. Provided functionality for everything except the backup
+    and cleaning. Hooks are left to add that functionality later. 
     """
 
     def __init__(self):
         self.DM = DirectoryManager()
         self.CP = CardPrinter()
+        self.previousOpt = None
 
         # Create a dictionary relating options to functions:
         self.functions = {}
@@ -38,6 +41,9 @@ class Menu(object):
     def printMenu(self):
         CP = self.CP
         DM = self.DM
+
+        # Clear the terminal:
+        clearTerminal()
 
         print("")
 
@@ -69,6 +75,12 @@ class Menu(object):
             line += k + ". " + v + space
 
         CP.lineCentered(line)
+
+        if self.previousOpt:
+            CP.separator()
+            CP.lineCentered("Previous selection : " + self.previousOpt)
+            self.previousOpt = None
+
         CP.footer()
         print("")
 
@@ -109,25 +121,76 @@ class Menu(object):
 
 
     def opt_add(self):
-        print("Add option selected.")
+        print(" ")
+        print("Adding new directory")
+        name = input("Name :: ")
+
+        src = input("Path to source directory :: ")
+        while (not self.DM.dirExists(src)):
+            print("")
+            terminal.printColor(terminal.red, "Directory does not exists.")
+            src = input("Path to source directory :: ")
+
+
+        dest = input("Path to destination directory :: ")
+        while (not self.DM.dirExists(dest)):
+            print("")
+            terminal.printColor(terminal.red, "Directory does not exists.")
+            dest = input("Path to destination directory :: ")
+
+
+        # Confirm the new directory:
+        print("")
+        self.CP.header()
+        self.CP.lineCentered("Add Directory")
+        self.CP.line(name)
+        self.CP.line("Source      :: " + src)
+        self.CP.line("Destination :: " + dest)
+        self.CP.footer()
+        y = input("Is this correct (y/n)? ")
+
+        if y == 'y':
+            self.DM.addDir(name, src, dest)
+
+        self.previousOpt = "Add directory"
+
+
+
 
     def opt_save(self):
-        print("Save option selected.")
+        self.DM.saveDirectories
+        self.previousOpt = "Save directories"
+
+
 
     def opt_check(self):
-        print("Check option selected.")
+        self.DM.checkDirs()
+        self.previousOpt = "Check directories"
+
+
 
     def opt_change(self):
-        print("Change option selected.")
+        self.previousOpt = "Change directory prefixes"
+
+
 
     def opt_start(self):
-        print("Start option selected.")
+        self.previousOpt = "Backup"
+
+
 
     def opt_clean(self):
-        print("Clean option selected.")
+        self.previousOpt = "Clean destination directories"
+
+
 
     def opt_clear(self):
-        print("Clear option selected.")
+        clearTerminal()
+        self.previousOpt = "Clear output"
+
+
+    def waitForEnter(self):
+        s = input("Press enter to return to menu")
 
 
 

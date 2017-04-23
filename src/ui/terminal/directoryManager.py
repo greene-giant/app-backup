@@ -44,6 +44,9 @@ class DirectoryManager(object):
                               self.valid[k]['dest'] )
 
         self.ranCheckDirs = True
+
+    def dirExists(self, pathToDir):
+        return os.path.exists(pathToDir)
         
 
     def printView(self):
@@ -99,6 +102,10 @@ class DirectoryManager(object):
                 self.cardPrinter.line("Source      :: " + v["src"],  srcColor)
                 self.cardPrinter.line("Destination :: " + v["dest"], destColor)
                 first = False
+
+
+    def saveDirectories(self):
+        self.dirs.writeSaveFile()
 
 
     def addDir(self, name, src, dest, opt=""):
