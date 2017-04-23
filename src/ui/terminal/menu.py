@@ -4,6 +4,8 @@ A class providing the menu functionality.
 
 """
 
+from function.backupThread import BackupThread
+
 from ui.terminal.card import CardPrinter, clearTerminal
 from ui.terminal.directoryManager import DirectoryManager
 import color.terminal as terminal
@@ -14,7 +16,7 @@ dirOptions = {"1" : "Add",
               "3" : "Check",
               "4" : "Change"}
 
-backupOptions = {"a" : "Start",
+backupOptions = {"a" : "Backup",
                  "b" : "Clean",
                  "c" : "Clear"}
 
@@ -103,6 +105,7 @@ class Menu(object):
                 self.functions[func]()
             else:
                 quit = True
+                clearTerminal()
 
 
 
@@ -170,11 +173,32 @@ class Menu(object):
 
 
     def opt_change(self):
+        print("")
+        terminal.printColor(terminal.red, "Changing directory prefix not currently implemented.")
+        print("")
+
+        self.waitForEnter()
         self.previousOpt = "Change directory prefixes"
 
 
 
-    def opt_start(self):
+    def opt_backup(self):
+        DM = self.DM
+
+        if DM.ranCheckDirs and DM.allValid:
+            BT = BackupThread(self.CP, self.DM.dirs.dirs)
+            BT.start()
+            BT.join()
+        elif not DM.ranCheckDirs:
+            print("")
+            terminal.printColor(terminal.red, "Check directories before backup")
+            print("")
+        else:
+            print("")
+            terminal.printColor(terminal.red, "Fix directories before backup")
+            print()
+
+        self.waitForEnter()
         self.previousOpt = "Backup"
 
 
@@ -190,7 +214,7 @@ class Menu(object):
 
 
     def waitForEnter(self):
-        s = input("Press enter to return to menu")
+        s = input("Press enter to return to menu.")
 
 
 

@@ -30,7 +30,8 @@ class CardPrinter(object):
     """
 
     def __init__(self):
-        self.width = int(config['terminal']['width']) - 5
+        self.width = int(config['terminal']['width']) - 6
+        self.colorUI = terminal.get_color()
 
         self.colorConvert = {}
         self.colorConvert['black']    = terminal.black
@@ -41,6 +42,11 @@ class CardPrinter(object):
         self.colorConvert['magenta']  = terminal.magenta
         self.colorConvert['yellow']   = terminal.yellow
         self.colorConvert['grey']     = terminal.grey
+        self.colorConvert['none']     = terminal.get_color()
+
+
+    def setColorUI(self, color):
+        self.colorUI = self.colorConvert[color]
 
 
     def line(self, line = " ", color = None, indent = " "):
@@ -59,7 +65,9 @@ class CardPrinter(object):
             if len(line) < width:
                 line += (width - len(line))*" "
 
-            printFlush(vert, end = "")
+            terminal.set_color(self.colorUI)
+            printFlush(" " + vert, end = "")
+            terminal.set_color(resetColor)
 
             if color:
                 terminal.set_color(self.colorConvert[color])
@@ -69,34 +77,45 @@ class CardPrinter(object):
             if color:
                 terminal.set_color(resetColor)
 
+            terminal.set_color(self.colorUI)
             printFlush(vert)
+            terminal.set_color(resetColor)
 
 
-    def lineCentered(self, line):
-        self.line(line.center(self.width), indent="")
+    def lineCentered(self, line, color = None):
+        self.line(line.center(self.width), color, indent="")
 
 
     def separator(self):
         horiz = config['terminal']['horizontalMark']
         vert  = config['terminal']['verticalMark']
+        resetColor = terminal.get_color()
 
-        print(vert + (self.width + 2)*horiz + vert)
+        terminal.set_color(self.colorUI)
+        print(" " + vert + (self.width + 2)*horiz + vert)
+        terminal.set_color(resetColor)
 
 
     def header(self):
         horiz = config['terminal']['horizontalMark']
         left  = config['terminal']['upperLeftMark']
         right = config['terminal']['upperRightMark']
+        resetColor = terminal.get_color()
 
-        print(left + (self.width + 2)*horiz + right)
+        terminal.set_color(self.colorUI)
+        print(" " + left + (self.width + 2)*horiz + right)
+        terminal.set_color(resetColor)
 
 
     def footer(self):
         horiz = config['terminal']['horizontalMark']
         left  = config['terminal']['lowerLeftMark']
         right = config['terminal']['lowerRightMark']
+        resetColor = terminal.get_color()
 
-        print(left + (self.width + 2)*horiz + right)
+        terminal.set_color(self.colorUI)
+        print(" " + left + (self.width + 2)*horiz + right)
+        terminal.set_color(resetColor)
 
 
 
