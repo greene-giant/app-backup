@@ -130,11 +130,11 @@ class Menu(object):
         print(" Adding new directory")
         name = input(" Name :: ")
 
-        src = input(" Path to source directory       :: ")
+        src = input(" Path to source directory      :: ")
         while (not self.DM.dirExists(src)):
             print("")
             terminal.printColor(terminal.red, " Directory does not exists.")
-            src = input(" Path to source directory       :: ")
+            src = input(" Path to source directory      :: ")
 
 
         dest = input(" Path to destination directory :: ")

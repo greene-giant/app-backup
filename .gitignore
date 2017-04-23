@@ -4,6 +4,8 @@ backupDirs.py
 testBackupDirs.py
 testSaveFormat.save
 
+backup.save
+
 src/test/src1
 src/test/src2
 src/test/src3

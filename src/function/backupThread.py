@@ -9,7 +9,7 @@ import subprocess as subp
 import time, os
 
 from function.configure import config
-from function.findFilesToClean import findFilesToClean
+from function.findFilesToClean import findFilesToClean, findFilesToCleanInRootOnly
 
 class BackupThread(thd.Thread):
     def __init__(self, output, dirs):
@@ -49,6 +49,9 @@ class BackupThread(thd.Thread):
                 # Copy subdirectories:
                 for d in os.listdir(v['src']):
                     if os.path.isdir(v['src'] + "/" + d):
+                        if not os.path.isdir(v['dest'] + "/" + d):
+                            os.mkdir(v['dest'] + "/" + d)
+
                         self.copySingleDirectory(k[:-1] + " (" + d + ")",
                                                  v['src'] + "/" + d,
                                                  v['dest'] + "/" + d,
@@ -125,8 +128,11 @@ class BackupThread(thd.Thread):
 
 
         # Get old files:
-        filesToClean = findFilesToClean(src, dest)
-        rootFiles = 0
+        if includeSubDir:
+            filesToClean = findFilesToClean(src, dest)
+        else:
+            filesToClean = findFilesToCleanInRootOnly(src, dest)
+
         out.line()
         for f in filesToClean:
             if f[0:len(dest)] == dest:
@@ -134,19 +140,9 @@ class BackupThread(thd.Thread):
 
             f = f.replace("\\", "/")
 
-            if includeSubDir:
-                out.line(f, colorClean)
-            elif "/" not in f:
-                out.line(f, colorClean)
-                rootFiles += 1
-                
+            out.line(f, colorClean)
 
-        if includeSubDir:
-            numCleanFiles = len(filesToClean)
-        else:
-            numCleanFiles = rootFiles
-
-        out.line("{} Old file(s)".format(numCleanFiles))
+        out.line("{} Old file(s)".format(len(filesToClean)))
 
 
         # Print footer:

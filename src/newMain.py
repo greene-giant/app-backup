@@ -1,11 +1,8 @@
 
-import function.configure as config
+from ui.terminal.menu import Menu
 
-print("FILE = " + config.filename)
 
-for sec in config.config:
-    print("\n[" + sec + "]")
-
-    for key in config.config[sec]:
-        print(key + " = " + config.config[sec][key])
+if __name__ == "__main__":
+    app = Menu()
+    app.run()
 

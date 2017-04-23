@@ -31,3 +31,14 @@ def findFilesToClean(src, dest):
 
     return oldFiles
 
+
+def findFilesToCleanInRootOnly(src, dest):
+    oldFiles = []
+
+    for f in os.listdir(dest):
+        if os.path.isfile(dest + "/" + f):
+            if not os.path.isfile(src + "/" + f):
+                oldFiles.append(dest + "/" + f)
+
+    return oldFiles
+

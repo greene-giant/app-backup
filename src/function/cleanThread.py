@@ -8,7 +8,7 @@ import threading as thd
 import os, time
 
 from function.configure import config
-from function.findFilesToClean import findFilesToClean
+from function.findFilesToClean import findFilesToClean, findFilesToCleanInRootOnly
 
 
 
@@ -38,11 +38,7 @@ class CleanThread(thd.Thread):
         for k, v in sorted(self.dirs.items()):
             if k[-1] == "*":
                 # Clean root directory:
-                filesToClean = []
-                for f in os.listdir(v['dest']):
-                    if os.path.isfile(v['dest'] + "/" + f):
-                        if not os.path.isfile(v['src'] + "/" + f):
-                            filesToClean.append(v['dest'] + "/" + f)
+                filesToClean = findFilesToCleanInRootOnly(v['src'], v['dest'])
 
                 self.cleanSingleDirectory(k[:-1] + " (just files)",
                                           v['src'],
