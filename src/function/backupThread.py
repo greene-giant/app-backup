@@ -22,7 +22,7 @@ class BackupThread(thd.Thread):
 
         colorUI    = config['terminal']['colorCopyUI']
         colorCopy  = config['terminal']['colorCopyFile']
-        colorClean = config['terminal']['colorCleanFile']
+        colorClean = config['terminal']['colorNeedCleanFile']
 
         out.setColorUI(colorUI)
 
@@ -37,6 +37,15 @@ class BackupThread(thd.Thread):
 
         for k, v in sorted(self.dirs.items()):
             if k[-1] == "*":
+                # Copy files in root:
+                self.copySingleDirectory(k[:-1] + " (just files)",
+                                         v['src'],
+                                         v['dest'],
+                                         colorUI, 
+                                         colorCopy,
+                                         colorClean,
+                                         includeSubDir = False)
+
                 # Copy subdirectories:
                 for d in os.listdir(v['src']):
                     if os.path.isdir(v['src'] + "/" + d):
@@ -46,17 +55,14 @@ class BackupThread(thd.Thread):
                                                  colorUI, 
                                                  colorCopy, 
                                                  colorClean)
-
-                # Copy files in root:
-                self.copySingleDirectory(k[:-1] + " (just files)",
-                                         v['src'],
-                                         v['dest'],
-                                         colorUI, 
-                                         colorCopy,
-                                         colorClean)
                                                  
             else:
-                self.copySingleDirectory(k, v['src'], v['dest'], colorUI, colorCopy, colorClean)
+                self.copySingleDirectory(k, 
+                                         v['src'], 
+                                         v['dest'], 
+                                         colorUI, 
+                                         colorCopy, 
+                                         colorClean)
 
         print("")
         out.header()
@@ -120,15 +126,27 @@ class BackupThread(thd.Thread):
 
         # Get old files:
         filesToClean = findFilesToClean(src, dest)
+        rootFiles = 0
         out.line()
         for f in filesToClean:
             if f[0:len(dest)] == dest:
                 f = f[len(dest)+1:]
 
-            f.replace("\\", "/")
-            out.line(f, colorClean)
+            f = f.replace("\\", "/")
 
-        out.line("{} Old file(s)".format(len(filesToClean)))
+            if includeSubDir:
+                out.line(f, colorClean)
+            elif "/" not in f:
+                out.line(f, colorClean)
+                rootFiles += 1
+                
+
+        if includeSubDir:
+            numCleanFiles = len(filesToClean)
+        else:
+            numCleanFiles = rootFiles
+
+        out.line("{} Old file(s)".format(numCleanFiles))
 
 
         # Print footer:

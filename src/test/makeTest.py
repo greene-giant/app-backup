@@ -71,4 +71,12 @@ for n in range(20):
 
     f.close()
 
+f = open('./test/dest3/file3bad.txt', 'w')
+f.write('aaa')
+f.close()
+
+f = open('./test/dest3/srcB/srcC/fileBad.txt', 'w')
+f.write('aaa')
+f.close()
+
 

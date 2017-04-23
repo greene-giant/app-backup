@@ -5,6 +5,7 @@ A class providing the menu functionality.
 """
 
 from function.backupThread import BackupThread
+from function.cleanThread import CleanThread
 
 from ui.terminal.card import CardPrinter, clearTerminal
 from ui.terminal.directoryManager import DirectoryManager
@@ -30,6 +31,7 @@ class Menu(object):
     def __init__(self):
         self.DM = DirectoryManager()
         self.CP = CardPrinter()
+        self.backupDone = False
         self.previousOpt = None
 
         # Create a dictionary relating options to functions:
@@ -150,10 +152,11 @@ class Menu(object):
         self.CP.line("Source      :: " + src)
         self.CP.line("Destination :: " + dest)
         self.CP.footer()
-        y = input("Is this correct (y/n)? ")
+        y = input(" Is this correct (y/n)? ")
 
         if y == 'y':
             self.DM.addDir(name, src, dest)
+            self.backupDone = False
 
         self.previousOpt = "Add directory"
 
@@ -189,13 +192,14 @@ class Menu(object):
             BT = BackupThread(self.CP, self.DM.dirs.dirs)
             BT.start()
             BT.join()
+            self.backupDone = True
         elif not DM.ranCheckDirs:
             print("")
-            terminal.printColor(terminal.red, "Check directories before backup")
+            terminal.printColor(terminal.red, " Check directories before backup")
             print("")
         else:
             print("")
-            terminal.printColor(terminal.red, "Fix directories before backup")
+            terminal.printColor(terminal.red, " Fix directories before backup")
             print()
 
         self.waitForEnter()
@@ -204,6 +208,26 @@ class Menu(object):
 
 
     def opt_clean(self):
+        DM = self.DM
+
+        if DM.ranCheckDirs and DM.allValid and self.backupDone:
+            CT = CleanThread(self.CP, self.DM.dirs.dirs)
+            CT.start()
+            CT.join()
+        elif not DM.ranCheckDirs:
+            print()
+            terminal.printColor(terminal.red, " Check directories before backup")
+            print()
+        elif not DM.allValid:
+            print()
+            terminal.printColor(terminal.red, " Fix directories before backup")
+            print()
+        else:
+            print()
+            terminal.printColor(terminal.red, " Preform backup first")
+            print()
+
+        self.waitForEnter()
         self.previousOpt = "Clean destination directories"
 
 
@@ -214,7 +238,7 @@ class Menu(object):
 
 
     def waitForEnter(self):
-        s = input("Press enter to return to menu.")
+        s = input(" Press enter to return to menu.")
 
 
 
