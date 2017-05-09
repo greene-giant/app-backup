@@ -13,6 +13,7 @@ src/test/dest1
 src/test/dest2
 src/test/dest3
 
+mock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
